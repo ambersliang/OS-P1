@@ -28,7 +28,7 @@ list_t *list_init(void (*destroy_data)(void *), int (*compare_to)(const void *, 
 void list_destroy(list_t **list) {
     // Check if the list is empty
     if (list == NULL) {
-        return NULL;
+        return;
     }
 
     node_t *current = (*list)->head->next;

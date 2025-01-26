@@ -242,6 +242,99 @@ void test_notInList(void)
   free(data);
 }
 
+void test_removeFromEmptyList(void)
+{
+    // Attempt to remove from an empty list
+    void *rval = list_remove_index(lst_, 0);
+    TEST_ASSERT_TRUE(rval == NULL); // Should return NULL
+    TEST_ASSERT_TRUE(lst_->size == 0);  
+
+    // Check if the sentinel node is still correctly initialized
+    TEST_ASSERT_FALSE(lst_->head->next == NULL);
+    TEST_ASSERT_FALSE(lst_->head->prev == NULL);
+    TEST_ASSERT_TRUE(lst_->head->next == lst_->head->prev);
+}
+
+void test_addRemoveMultiple(void)
+{
+    list_add(lst_, alloc_data(1));
+    list_add(lst_, alloc_data(2));
+    list_add(lst_, alloc_data(3));
+    TEST_ASSERT_TRUE(lst_->size == 3);
+
+    // Remove the first element and check
+    int *rval = (int *)list_remove_index(lst_, 0);
+    TEST_ASSERT_TRUE(*rval == 3);
+    free(rval);
+    TEST_ASSERT_TRUE(lst_->size == 2);
+
+    // Remove the last element and check
+    rval = (int *)list_remove_index(lst_, 1);
+    TEST_ASSERT_TRUE(*rval == 1);
+    free(rval);
+    TEST_ASSERT_TRUE(lst_->size == 1);
+
+    // Remove the only remaining element and check
+    rval = (int *)list_remove_index(lst_, 0);
+    TEST_ASSERT_TRUE(*rval == 2);
+    free(rval);
+    TEST_ASSERT_TRUE(lst_->size == 0);
+}
+
+void test_addMultiple(void)
+{
+    list_add(lst_, alloc_data(10));
+    list_add(lst_, alloc_data(20));
+    list_add(lst_, alloc_data(30));
+
+    // List should be 30 -> 20 -> 10
+    TEST_ASSERT_TRUE(lst_->size == 3);
+    TEST_ASSERT_TRUE(*((int *)lst_->head->next->data) == 30);
+    TEST_ASSERT_TRUE(*((int *)lst_->head->next->next->data) == 20);
+    TEST_ASSERT_TRUE(*((int *)lst_->head->next->next->next->data) == 10);
+}
+
+void test_removeIntegrity(void)
+{
+    populate_list();  // Should create a list 4->3->2->1->0
+
+    // Remove the second element (3) and check the list
+    int *rval = (int *)list_remove_index(lst_, 1);
+    TEST_ASSERT_TRUE(*rval == 3);
+    free(rval);
+
+    // List should now be 4->2->1->0
+    node_t *curr = lst_->head->next;
+    TEST_ASSERT_TRUE(*((int *)curr->data) == 4);
+    curr = curr->next;
+    TEST_ASSERT_TRUE(*((int *)curr->data) == 2);
+    curr = curr->next;
+    TEST_ASSERT_TRUE(*((int *)curr->data) == 1);
+    curr = curr->next;
+    TEST_ASSERT_TRUE(*((int *)curr->data) == 0);
+}
+
+void test_indexOf(void)
+{
+    populate_list();  // List should be 4->3->2->1->0
+
+    // Check the index of 4
+    void *data = lst_->head->next->data;
+    size_t idx = list_indexof(lst_, data);
+    TEST_ASSERT_TRUE(idx == 0);
+
+    // Check the index of 1
+    data = lst_->head->next->next->next->next->data;
+    idx = list_indexof(lst_, data);
+    TEST_ASSERT_TRUE(idx == 3);
+
+    // Check the index of 10 (not in the list)
+    int *nonexistent = alloc_data(10);
+    idx = list_indexof(lst_, nonexistent);
+    TEST_ASSERT_EQUAL_INT64(-1, idx);
+    free(nonexistent);
+}
+
 int main(void) {
   UNITY_BEGIN();
   RUN_TEST(test_create_destroy);
@@ -255,5 +348,10 @@ int main(void) {
   RUN_TEST(test_indexOf0);
   RUN_TEST(test_indexOf3);
   RUN_TEST(test_notInList);
+  RUN_TEST(test_removeFromEmptyList);
+  RUN_TEST(test_addRemoveMultiple);
+  RUN_TEST(test_addMultiple);
+  RUN_TEST(test_removeIntegrity);
+  RUN_TEST(test_indexOf);
   return UNITY_END();
 }

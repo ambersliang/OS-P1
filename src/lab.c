@@ -14,7 +14,8 @@ list_t *list_init(void (*destroy_data)(void *), int (*compare_to)(const void *, 
         return NULL;
     }
     
-    // Sentinel node points to itself when the list is empty
+    // Initialize the doubly linked list
+    new_list->head->data = NULL;
     new_list->head->next = new_list->head;
     new_list->head->prev = new_list->head;
 
@@ -26,25 +27,37 @@ list_t *list_init(void (*destroy_data)(void *), int (*compare_to)(const void *, 
 }
 
 void list_destroy(list_t **list) {
-    // Check if the list is empty
-    if (list == NULL) {
+    // Check if the list is empty or if the list pointer is NULL
+    if (list == NULL || *list == NULL) {
         return;
     }
 
     node_t *current = (*list)->head->next;
+    
+    // Traverse through the list and free all nodes
     while (current != (*list)->head) {
         node_t *next = current->next;
-        if ((*list)->destroy_data != NULL) {
+        
+        // Use provided destroy_data function to free data in the node
+        if ((*list)->destroy_data && current->data) {
             (*list)->destroy_data(current->data);
         }
+        
+        // Free the node
         free(current);
         current = next;
     }
 
+    // Free the sentinel node
     free((*list)->head);
+    
+    // Free the list structure
     free(*list);
+
+    // Set the list pointer to NULL to avoid dangling pointer
     *list = NULL;
 }
+
 
 list_t *list_add(list_t *list, void *data) {
     // Check if the list is empty
@@ -52,6 +65,7 @@ list_t *list_add(list_t *list, void *data) {
         return NULL;
     }
 
+    // Allocate memory for the new node
     node_t *new_node = (node_t *)malloc(sizeof(node_t));
     if (new_node == NULL) {
         return NULL;

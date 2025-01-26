@@ -1,6 +1,12 @@
 #include <stdlib.h>
 #include "lab.h"
 
+/**
+ * Author: Amber Liang
+ * Date: Sun Jan 26 15:48:36 MST 2025
+ * Description: This file contains the implementation of a doubly linked list with a sentinel node.
+ */
+
 list_t *list_init(void (*destroy_data)(void *), int (*compare_to)(const void *, const void *)) {
     // Allocate memory for the list 
     list_t *new_list = (list_t *)malloc(sizeof(list_t));

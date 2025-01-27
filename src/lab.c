@@ -2,7 +2,7 @@
 #include "lab.h"
 
 /**
- * Author: Amber Liang
+ * Author: Amber Liang, Copilot
  * Date: Sun Jan 26 15:48:36 MST 2025
  * Description: This file contains the implementation of a doubly linked list with a sentinel node.
  */

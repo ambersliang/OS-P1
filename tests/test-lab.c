@@ -242,6 +242,9 @@ void test_notInList(void)
   free(data);
 }
 
+/**
+ * Additional tests
+ */
 void test_removeFromEmptyList(void)
 {
     // Attempt to remove from an empty list
@@ -296,7 +299,7 @@ void test_addMultiple(void)
 
 void test_removeIntegrity(void)
 {
-    populate_list();  // Should create a list 4->3->2->1->0
+    populate_list(); 
 
     // Remove the second element (3) and check the list
     int *rval = (int *)list_remove_index(lst_, 1);
